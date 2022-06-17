@@ -1,0 +1,23 @@
+modules:
+    index:
+        name: Tanzu Workshop Overview
+        exit_sign: Start Workshop
+    labs/testcase:
+        name: Test Case
+    labs/setup:
+        name: Setup               
+    finish:
+        name: Tanzu Workshop Complete
+        exit_sign: Exit Workshop
+config:
+    vars:
+    - name: SC_API_VIP
+      value: SC_API_VIP
+    - name: SC_USER_NAME
+      value: SC_USER_NAME
+    - name: TKC_NAMESPACE
+      value: TKC_NAMESPACE     
+    - name: TKC_NAME
+      value: TKC_NAME   
+    - name: LOADBALANCER_EXTERNAL_IP
+      value: LOADBALANCER_EXTERNAL_IP   

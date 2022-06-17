@@ -1,0 +1,8 @@
+name: Tanzu Advanced Workshop
+
+modules:
+    activate:
+    - index
+    - labs/setup
+    - labs/testcase
+    - finish
