@@ -1,12 +1,12 @@
 # SC02-TC03: Environment Setup & Validation - Validate TSM console accessible
 
-This scenario is designed to help validate that the current testing environment is setup properly and ready for Tanzu Service Mesh test cases.
+This scenario captures how demonstrate how a Kubernetes cluster can be onboarded to Tanzu Service Mesh (TSM).
 
 ---
 
 ## Test Case Summary
 
-This test case procedure validates the Tanzu Service Mesh (TSM) console is accessible.
+This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Service Mesh (TSM) with REST API Calls. This is useful for those looking to automate their Kubernetes cluster onboarding.
 
 ---
 
@@ -34,7 +34,14 @@ This test case procedure validates the Tanzu Service Mesh (TSM) console is acces
     Expected:
 
     ```bash
-    {"id_token":"REDACTED","token_type":"bearer","expires_in":1799,"scope":"ALL_PERMISSIONS customer_number openid group_ids group_names",<b>"access_token":"REDACTED"</b>,"refresh_token":"REDACTED>"}
+    {
+    "id_token": "REDACTED",
+    "token_type": "bearer",
+    "expires_in": 1799,
+    "scope": "ALL_PERMISSIONS customer_number openid group_ids group_names",
+    "access_token": "REDACTED",
+    "refresh_token": "REDACTED"
+    }
     ```
 
 3. Begin onboarding your Kubernetes Cluster by retrieiving the TSM onboarding url. Execute the following REST API call by using your given TSM POC server value for the `${TSM-SERVER-NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP-AUTH-TOKEN}` variable.
@@ -46,7 +53,9 @@ This test case procedure validates the Tanzu Service Mesh (TSM) console is acces
     Expected:
 
     ```bash
-    {"url":"https://${TSM-SERVER-NAME}/cluster-registration/k8s/operator-deployment.yaml"}
+    {
+    "url":"https://${TSM-SERVER-NAME}/cluster-registration/k8s/operator-deployment.yaml"
+    }
     ```
 
 4. The TSM onboarding url obtained in the previous step contains the needed Kubernetes manifests/objects and custom resource definitions (CRDs) for installing Tanzu Service Mesh components into your cluster. Apply this file reference to your Kubernetes cluster with the following commands. For `${CLUSTER-CONTEXT-NAME}` use the context name for your targeted Kubernetes cluster and the TSM onboarding url from the previous step for the `${TSM-ONBOARDING-URL}` variable.
