@@ -12,9 +12,7 @@ rebuild: clean build
 run:
 	docker run --name tanzu-service-mesh-poc -v /var/run/docker.sock:/var/run/docker.sock -v $$PWD/scenarios:/scenarios -v $$PWD/config/kube.conf:/root/.kube/config -td tanzu-service-mesh-poc:latest
 	docker exec -it tanzu-service-mesh-poc bash -l
-demo: 
-	docker run --name tanzu-service-mesh-poc -p 8080-8090:8080-8090 -v /var/run/docker.sock:/var/run/docker.sock -v $$PWD/scenarios:/scenarios -v $$PWD/config/kube.conf:/root/.kube/config -td tanzu-service-mesh-poc:latest
-	docker exec -it tanzu-service-mesh-poc bash -l	
+	
 join:
 	docker exec -it tanzu-service-mesh-poc bash -l
 
