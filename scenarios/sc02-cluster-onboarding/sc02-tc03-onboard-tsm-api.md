@@ -1,6 +1,6 @@
 # SC02-TC03: Environment Setup & Validation - Validate TSM console accessible
 
-This scenario captures how demonstrate how a Kubernetes cluster can be onboarded to Tanzu Service Mesh (TSM).
+This scenario captures how a Kubernetes cluster can be onboarded to Tanzu Service Mesh (TSM).
 
 ---
 
