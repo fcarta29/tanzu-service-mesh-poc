@@ -26,14 +26,14 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
 ## Test Procedure
 
-1. From the VMware Cloud Services Portal get or generate an API token. (NOTE: Typically this would be created for an automation service account)
+1. From the VMware Cloud Services Portal get or generate an API token. Copy the API token and save it to a secure note/place.(NOTE: Typically this would be created for an automation service account)
 
     ![VMware CSP Create Organization](../images/vmware-csp-my-account-api-token.png)
 
-2. With this API token in place for `${CSP-API-TOKEN}` use the example below to obtain an authentication token from the VMware Cloud Service API. On successful authorization a response including an `access_token` will be returned which should be copied and retained for further API requests.
+2. With this API token in place for `${CSP_API_TOKEN}` use the example below to obtain an authentication token from the VMware Cloud Service API. On successful authorization a response including an `access_token` will be returned which should be copied and retained for further API requests.
 
     ```execute
-    curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "Accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP-API-TOKEN}"
+    curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "Accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}"
     ```
 
     Expected:
@@ -49,24 +49,24 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     }
     ```
 
-3. Begin onboarding your Kubernetes Cluster by retrieiving the TSM onboarding url. Execute the following REST API call by using your given TSM POC server value for the `${TSM-SERVER-NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP-AUTH-TOKEN}` variable.
+3. Begin onboarding your Kubernetes Cluster by retrieiving the TSM onboarding url. Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
 
     ```execute
-    curl -k -X GET "https://${TSM-SERVER-NAME}/tsm/v1alpha1/clusters/onboard-url" -H "csp-auth-token:${CSP-AUTH-TOKEN}"
+    curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/onboard-url" -H "csp-auth-token:${CSP_AUTH_TOKEN}"
     ```
 
     Expected:
 
     ```bash
     {
-    "url":"https://${TSM-SERVER-NAME}/cluster-registration/k8s/operator-deployment.yaml"
+    "url":"https://${TSM_SERVER_NAME}/cluster-registration/k8s/operator-deployment.yaml"
     }
     ```
 
-4. The TSM onboarding url obtained in the previous step contains the needed Kubernetes manifests/objects and custom resource definitions (CRDs) for installing Tanzu Service Mesh components into your cluster. Apply this file reference to your Kubernetes cluster with the following commands. For `${CLUSTER-CONTEXT-NAME}` use the context name for your targeted Kubernetes cluster and the TSM onboarding url from the previous step for the `${TSM-ONBOARDING-URL}` variable.
+4. The TSM onboarding url obtained in the previous step contains the needed Kubernetes manifests/objects and custom resource definitions (CRDs) for installing Tanzu Service Mesh components into your cluster. Apply this file reference to your Kubernetes cluster with the following commands. For `${CLUSTER_CONTEXT_NAME}` use the context name for your targeted Kubernetes cluster and the TSM onboarding url from the previous step for the `${TSM_ONBOARDING_URL}` variable.
 
     ```execute
-    kubectl --context ${CLUSTER-CONTEXT-NAME} apply -f ${TSM-ONBOARDING-URL}
+    kubectl --context ${CLUSTER_CONTEXT_NAME} apply -f ${TSM_ONBOARDING_URL}
     ```
 
     Expected:
@@ -94,12 +94,12 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     job.batch/update-scc-job created
     ```
 
-5. Submit the a request to onboard your Kubernetes cluster with the following command. For the `${TSM-SERVER-NAME}` value add your given TSM POC server. For `${CLUSTER-NAME}` you can use whatever name you want here but it would make sense to make it the same as the cluster context name you use for the kube configuration (NOTE: There are restrictions on the allowed characters for a cluster name, use all lower case letters and dashes). Use the `auth_token` value from previous authentication step for `${CSP-AUTH-TOKEN}`.
+5. Submit the a request to onboard your Kubernetes cluster with the following command. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` you can use whatever name you want here but it would make sense to make it the same as the cluster context name you use for the kube configuration (NOTE: There are restrictions on the allowed characters for a cluster name, use all lower case letters and dashes). Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`.
 
     ```bash
-    curl -k -X PUT "https://${TSM-SERVER-NAME}/tsm/v1alpha1/clusters/${CLUSTER-NAME}?createOnly=true" -H "csp-auth-token:${CSP-AUTH-TOKEN}" -H "Content-Type: application/json" -d '
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/${CLUSTER_NAME}?createOnly=true" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
     {
-        "displayName": "${CLUSTER-NAME}",
+        "displayName": "${CLUSTER_NAME}",
         "description": "",
         "autoInstallServiceMesh": false,
         "enableNamespaceExclusions":true,
@@ -125,7 +125,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
     ```bash
     {
-    "displayName": "${CLUSTER-NAME}",
+    "displayName": "${CLUSTER_NAME}",
     "description": "",
     "tags": [],
     "labels": [],
@@ -140,7 +140,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
         # DEPENDS ON NAMESPACES INCLUDED IN STEP ABOVE
         ],
     "proxyConfig": { "password": "**redacted**" },
-    "id": "${CLUSTER-NAME}",
+    "id": "${CLUSTER_NAME}",
     "token": "REDACTED",  # <--------------------- ONBOARDING TOKEN HERE
     "registered": false,
     "systemNamespaceExclusions":
@@ -165,10 +165,10 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     }
     ```
 
-6. Generate a private secret to allow TSM to establish secure connection to the global TSM control plane. Run the following command with the `token` value from the previous step for the `${TSM-ONBOARDING-TOKEN}` variable.
+6. Generate a private secret to allow TSM to establish secure connection to the global TSM control plane. Run the following command with the `token` value from the previous step for the `${TSM_ONBOARDING_TOKEN}` variable.
 
     ```execute
-    kubectl -n vmware-system-tsm create secret generic cluster-token --from-literal=token=${TSM-ONBOARDING-TOKEN}
+    kubectl -n vmware-system-tsm create secret generic cluster-token --from-literal=token=${TSM_ONBOARDING_TOKEN}
     ```
 
     Expected:
@@ -177,17 +177,17 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     secret/cluster-token created
     ```
 
-7. Validate that TSM was able to make a secure connection to the global TSM control plane. For the `${TSM-SERVER-NAME}` value add your given TSM POC server. For `${CLUSTER-NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP-AUTH-TOKEN}`.
+7. Validate that TSM was able to make a secure connection to the global TSM control plane. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`.
 
     ```execute
-    curl -k -X GET "https://${TSM-SERVER-NAME}/tsm/v1alpha1/clusters/${CLUSTER-NAME}" -H "csp-auth-token:${CSP-AUTH-TOKEN}"
+    curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/${CLUSTER_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}"
     ```
 
     Expected:
 
     ```bash
     {
-    "displayName": "${CLUSTER-NAME}",
+    "displayName": "${CLUSTER_NAME}",
     "description": "",
     "tags": [],
     "labels": [],
@@ -199,8 +199,8 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     "proxyConfig": {
         "password": "**redacted**"
     },
-    "id": "${CLUSTER-NAME}",
-    "name": "${CLUSTER-NAME}",
+    "id": "${CLUSTER_NAME}",
+    "name": "${CLUSTER_NAME}",
     "type": "Kubernetes",
     "version": "v1.21.8+vmware.1",
     "status": {
@@ -217,10 +217,10 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     }
     ```
 
-8. When the `status.state` field shows `Connected` from the step above then you can install TSM to your Kubernetes cluster. For the `${TSM-SERVER-NAME}` value add your given TSM POC server. For `${CLUSTER-NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP-AUTH-TOKEN}`. To install the latest TSM version use `default` as a value for `${TSM-VERSION}`.
+8. When the `status.state` field shows `Connected` from the step above then you can install TSM to your Kubernetes cluster. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`. To install the latest TSM version use `default` as a value for `${TSM_VERSION}`.
 
     ```execute
-    curl -k -X PUT "https://${TSM-SERVER-NAME}/tsm/v1alpha1/clusters/${CLUSTER-NAME}/apps/tsm" -H "csp-auth-token:${CSP-AUTH-TOKEN}" -H "Content-Type: application/json" -d '{"version": "${TSM-VERSION}"}'
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/${CLUSTER_NAME}/apps/tsm" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '{"version": "${TSM_VERSION}"}'
     ```
 
     Expected:
@@ -229,10 +229,10 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     {"id":"<REDACTED>"}
     ```
 
-9. The TSM installation can take a couple minutes. To check/validate the status of the installation run the following. For the `${TSM-SERVER-NAME}` value add your given TSM POC server. For `${CLUSTER-NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP-AUTH-TOKEN}`.
+9. The TSM installation can take a couple minutes. To check/validate the status of the installation run the following. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`.
 
     ```execute
-    curl -k -X GET "https://${TSM-SERVER-NAME}/tsm/v1alpha1/clusters/${CLUSTER-NAME}" -H "csp-auth-token:${CSP-AUTH-TOKEN}"
+    curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/${CLUSTER_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}"
     ```
 
     Expected:
