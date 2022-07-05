@@ -1,4 +1,4 @@
-# SC01-TC02: Environment Setup & Validation
+# SC01-TC02: Environment Setup & Validation - Configure AVI GSLB for TSM
 
 This scenario is designed to help validate that the current testing environment is setup properly and ready for Tanzu Service Mesh test cases.
 

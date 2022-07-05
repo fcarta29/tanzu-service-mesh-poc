@@ -30,4 +30,4 @@ spec:
     - destination:
         host: shopping
         port:
-          number: 3000 
+          number: 3000
