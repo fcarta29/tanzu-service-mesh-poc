@@ -80,12 +80,13 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
     kubectl config set-context --current --namespace=default
     ```
 
-3. Deploy the supplied Kubernetes manifests for the ACME Fitness Application.
+3. Deploy the supplied Kubernetes manifests for the ACME Fitness Application (without the `catalog` service).
 
     ```execute
     kubectl apply -f scenarios/files/acme-fitness-app/app/acme-fitness.yaml
     kubectl apply -f scenarios/files/acme-fitness-app/app/acme-gateway.yaml
     kubectl apply -f scenarios/files/acme-fitness-app/app/acme-secrets.yaml
+    kubectl apply -f scenarios/files/acme-fitness-app/app/acme-fitness-catalog-west.yaml
     ```
 
     Expected:
@@ -115,6 +116,12 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
     secret/catalog-mongo-pass created
     secret/order-mongo-pass created
     secret/users-mongo-pass created
+    ...
+    configmap/catalog-initdb-config created
+    service/catalog-mongo created
+    deployment.apps/catalog-mongo created
+    service/catalog created
+    deployment.apps/catalog created
     ```
 
 4. Validate all pods for the ACME Fitness application are running
@@ -136,6 +143,8 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
     shopping-6ff46695f5-rr9m2       2/2     Running   0          5d18h
     users-5cf6b58489-p4l5z          2/2     Running   0          5d21h
     users-mongo-74c459f9f7-xpqbf    2/2     Running   0          5d21h
+    catalog-5cd86dc8d6-llr99       2/2     Running       0          13s
+    catalog-mongo-8df44d45-lc242   2/2     Running       0          14s
     ```
 
 5. View ACME Fitness Services Running
@@ -158,6 +167,8 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
     shopping      ClusterIP   100.68.234.11    <none>        3000/TCP    5d22h
     users         ClusterIP   100.65.54.70     <none>        8081/TCP    5d22h
     users-mongo   ClusterIP   100.69.189.191   <none>        27017/TCP   5d22h
+    catalog         ClusterIP   100.68.133.208   <none>        8082/TCP    52s
+    catalog-mongo   ClusterIP   100.66.143.64    <none>        27017/TCP   52s
     ```
 
 6. Get the ACME Fitness Applicaiton endpoint from the `EXTERNAL-IP` of the TSM LoadBalancer object and paste into browser.
