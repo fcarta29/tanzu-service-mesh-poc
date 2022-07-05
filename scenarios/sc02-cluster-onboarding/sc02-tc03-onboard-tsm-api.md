@@ -1,4 +1,4 @@
-# SC02-TC03: Environment Setup & Validation - Validate TSM console accessible
+# SC02-TC03: Onboarding a Kubernetes Cluster to Tanzu Service Mesh (TSM) - Using TSM REST API
 
 This scenario captures how a Kubernetes cluster can be onboarded to Tanzu Service Mesh (TSM).
 
@@ -271,4 +271,4 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 * [  ] Pass
 * [  ] Fail
 
-Return to [Test Cases Inventory](../../README.md###Test-Cases-Inventory)
+Return to [Test Cases Inventory](../../README.md#Test-Cases-Inventory)
