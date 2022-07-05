@@ -14,6 +14,12 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
 ---
 
+## Prerequisites
+
+* Completion of [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
+
+---
+
 ## Test Procedure
 
 1. TBD

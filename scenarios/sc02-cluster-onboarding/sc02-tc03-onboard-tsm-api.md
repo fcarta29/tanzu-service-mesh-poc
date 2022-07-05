@@ -16,6 +16,11 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 * Generating an API Token to Interact with VMware Cloud Service APIs [Generating an API Token to Interact with VMware Cloud Service APIs](https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-E2A3B1C1-E9AD-4B00-A6B6-88D31FCDDF7C.html)
 * Tanzu Service Mesh API [Tanzu Service Mesh API](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/api-programming-guide/GUID-FED8E849-B3C3-49ED-9FDB-1317CFFF3141.html)
 
+---
+
+## Prerequisites
+
+* Completion of [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
 
 ---
 
