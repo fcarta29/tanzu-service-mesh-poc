@@ -269,6 +269,18 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     ...
     ```
 
+10. Validate an external Loadbalancer was created
+
+    ```execute
+    kubectl get svc -A | grep LoadBalancer
+    ```
+
+    Expected:
+
+    ```sh
+    istio-system              istio-ingressgateway            LoadBalancer   100.68.30.11     <REDACTED>.us-west-2.elb.amazonaws.com   15021:31714/TCP,80:31268/TCP,443:32006/TCP   11d
+    ```
+
 ---
 
 ## Status Pass/Fail
