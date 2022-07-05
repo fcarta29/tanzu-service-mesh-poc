@@ -30,4 +30,4 @@ This test case procedure configures AVI with a GSLB and integrates it into Tanzu
 * [  ] Pass
 * [  ] Fail
 
-Return to [Test Cases Inventory](../../README.md###Test-Cases-Inventory)
+Return to [Test Cases Inventory](../../README.md#test-cases-inventory)

@@ -67,4 +67,4 @@ This test case procedure walks through the on-boarding workflow when you are inv
 * [  ] Pass
 * [  ] Fail
 
-Return to [Test Cases Inventory](../../README.md###Test-Cases-Inventory)
+Return to [Test Cases Inventory](../../README.md#test-cases-inventory)

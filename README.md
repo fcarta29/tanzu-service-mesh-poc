@@ -63,18 +63,16 @@ make stop
 Test Case ID | Test Case Description |
 --- | --- |
 [SC01-TC01](scenarios/sc01-environment-setup/sc01-tc01-validate-tsm-console.md) | Validate TSM console accessible |
-[SC01-TC02](scenarios/sc01-environment-setup/sc01-tc02-configure-avi-gslb.md) | Configure AVI GSLB for TSM |
 
 #### Scenario SC02: Cluster Onboarding
 
 Test Case ID | Test Case Description |
---- | --- |
+[SC02-TC03](scenarios/sc02-cluster-onboarding/sc02-tc03-onboard-tsm-api.md) | Using TSM REST API |
 --- | --- |
 
 #### Scenario SC03: Application Deployment
-
 Test Case ID | Test Case Description |
---- | --- |
+[SC03-TC01](scenarios/sc03-application-deployment/sc03-tc01-acme-fitness-application.md) | Deploying ACME Fitness Sample Application |
 --- | --- |
 
 #### Scenario SC04: Application Observability
