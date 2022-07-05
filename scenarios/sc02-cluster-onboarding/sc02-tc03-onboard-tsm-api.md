@@ -271,4 +271,4 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 * [  ] Pass
 * [  ] Fail
 
-Return to [Test Cases Inventory](../../README.md#Test-Cases-Inventory)
+Return to [Test Cases Inventory](../../README.md#test-cases-inventory)
