@@ -142,7 +142,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     ```bash
     curl -k -X POST "https://${TSM_SERVER_NAME}/tsm/v1alpha1/global-namespaces" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
     {
-        "name": ${TSM_GLOBALNAMESPACE_NAME},
+        "name": "${TSM_GLOBALNAMESPACE_NAME}",
         "display_name": "${TSM_GLOBALNAMESPACE_NAME}",
         "domain_name": "${TSM_GLOBALNAMESPACE_DOMAIN}",
         "mtls_enforced": true,
@@ -311,14 +311,14 @@ This test procedure assumes that the full ACME Fitness Application along with th
     ...
         spec:
       containers:
-      * env:
-        * name: FRONTEND_PORT
+      - env:
+        - name: FRONTEND_PORT
           value: "3000"
-        * name: USERS_HOST
+        - name: USERS_HOST
           value: users
-        * name: CATALOG_HOST
+        - name: CATALOG_HOST
           value: catalog.${TSM_GLOBALNAMESPACE_DOMAIN}
-        * name: ORDER_HOST
+        - name: ORDER_HOST
           value: order
     ...
     ```
@@ -327,11 +327,15 @@ This test procedure assumes that the full ACME Fitness Application along with th
     deployment.apps/shopping edited
     </pre>
 
-11. Validate that traffic is flowing between the ACME Fitness Application across the two(2) Kubernetes Clusters (${KUBERNETES_CLUSTER1}, ${KUBERNETES_CLUSTER2}) over the GNS. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services.
+11. Validate that traffic is flowing between the ACME Fitness Application across the two(2) Kubernetes Clusters ( `${KUBERNETES_CLUSTER1}` , `${KUBERNETES_CLUSTER2}` ) over the GNS. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services. Also validate via browser that the ACME Fitness Application is showing both the East and West catalog images (You may need clear/disable caching to see images rotate).
 
     ---
     TSM GNS Overview - GNS Topology for ACME Fitness Application
     ![TSM Cluster Overview](../images/vmware-tsm-gns-service-topology-acme-fitness.png)
+
+    ---
+    ACME Fitness Application over GNS (East/West Images)
+    ![ACME Fitness Application over GNS](../images/acme-fitness-home-gns.png)
 
 ---
 
