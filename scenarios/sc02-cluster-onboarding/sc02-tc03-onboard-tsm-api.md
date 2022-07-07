@@ -100,6 +100,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     {
         "displayName": "${CLUSTER_NAME}",
         "description": "",
+        "tags": [],
         "autoInstallServiceMesh": false,
         "enableNamespaceExclusions":true,
         "namespaceExclusions": [{
