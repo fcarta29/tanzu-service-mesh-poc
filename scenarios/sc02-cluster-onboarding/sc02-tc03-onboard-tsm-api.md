@@ -15,6 +15,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 * VMware Cloud Portal Auth/Token Flow for API calls [VMware Cloud Portal Auth/Token Flow for API calls](https://docs.vmware.com/en/vRealize-Operations/Cloud/com.vmware.vcom.api.doc/GUID-57E59E35-6C08-4424-A77F-468FACD35C41.html)
 * Generating an API Token to Interact with VMware Cloud Service APIs [Generating an API Token to Interact with VMware Cloud Service APIs](https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-E2A3B1C1-E9AD-4B00-A6B6-88D31FCDDF7C.html)
 * Tanzu Service Mesh API [Tanzu Service Mesh API](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/api-programming-guide/GUID-FED8E849-B3C3-49ED-9FDB-1317CFFF3141.html)
+* Supported Platforms [Tanzu Service Mesh Supported Platforms](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/tanzu-service-mesh-environment-requirements-and-supported-platforms/GUID-D0B939BE-474E-4075-9A65-3D72B5B9F237.html#supported-platforms-1)
 
 ---
 
@@ -36,9 +37,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "Accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}"
     ```
 
-    Expected:
-
-    ```bash
+    Expected:<pre>
     {
     "id_token": "REDACTED",
     "token_type": "bearer",
@@ -47,7 +46,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     "access_token": "REDACTED",
     "refresh_token": "REDACTED"
     }
-    ```
+    </pre>
 
 3. Begin onboarding your Kubernetes Cluster by retrieiving the TSM onboarding url. Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
 
@@ -55,13 +54,11 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/onboard-url" -H "csp-auth-token:${CSP_AUTH_TOKEN}"
     ```
 
-    Expected:
-
-    ```bash
+    Expected:<pre>
     {
     "url":"https://${TSM_SERVER_NAME}/cluster-registration/k8s/operator-deployment.yaml"
     }
-    ```
+    </pre>
 
 4. The TSM onboarding url obtained in the previous step contains the needed Kubernetes manifests/objects and custom resource definitions (CRDs) for installing Tanzu Service Mesh components into your cluster. Apply this file reference to your Kubernetes cluster with the following commands. For `${CLUSTER_CONTEXT_NAME}` use the context name for your targeted Kubernetes cluster and the TSM onboarding url from the previous step for the `${TSM_ONBOARDING_URL}` variable.
 
@@ -121,9 +118,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     }'
     ```
 
-    Expected:
-
-    ```bash
+    Expected:<pre>
     {
     "displayName": "${CLUSTER_NAME}",
     "description": "",
@@ -163,7 +158,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     "registryAccount": "",
     "caLabels": [],
     }
-    ```
+    </pre>
 
 6. Generate a private secret to allow TSM to establish secure connection to the global TSM control plane. Run the following command with the `token` value from the previous step for the `${TSM_ONBOARDING_TOKEN}` variable.
 
