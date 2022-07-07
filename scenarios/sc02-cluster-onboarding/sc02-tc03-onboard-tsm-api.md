@@ -37,16 +37,18 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "Accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}"
     ```
 
-    Expected:<pre>
+    Expected:
+
+    ```json
     {
-    "id_token": "REDACTED",
-    "token_type": "bearer",
-    "expires_in": 1799,
-    "scope": "ALL_PERMISSIONS customer_number openid group_ids group_names",
-    "access_token": "REDACTED",
-    "refresh_token": "REDACTED"
+        "id_token": "REDACTED",
+        "token_type": "bearer",
+        "expires_in": 1799,
+        "scope": "ALL_PERMISSIONS customer_number openid group_ids group_names",
+        "access_token": "REDACTED",
+        "refresh_token": "REDACTED"
     }
-    </pre>
+    ```
 
 3. Begin onboarding your Kubernetes Cluster by retrieiving the TSM onboarding url. Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
 
@@ -54,11 +56,13 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/onboard-url" -H "csp-auth-token:${CSP_AUTH_TOKEN}"
     ```
 
-    Expected:<pre>
+    Expected:
+
+    ```json
     {
-    "url":"https://${TSM_SERVER_NAME}/cluster-registration/k8s/operator-deployment.yaml"
+        "url":"https://${TSM_SERVER_NAME}/cluster-registration/k8s/operator-deployment.yaml"
     }
-    </pre>
+    ```
 
 4. The TSM onboarding url obtained in the previous step contains the needed Kubernetes manifests/objects and custom resource definitions (CRDs) for installing Tanzu Service Mesh components into your cluster. Apply this file reference to your Kubernetes cluster with the following commands. For `${CLUSTER_CONTEXT_NAME}` use the context name for your targeted Kubernetes cluster and the TSM onboarding url from the previous step for the `${TSM_ONBOARDING_URL}` variable.
 
@@ -66,9 +70,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     kubectl --context ${CLUSTER_CONTEXT_NAME} apply -f ${TSM_ONBOARDING_URL}
     ```
 
-    Expected:
-
-    ```bash
+    Expected:<pre>
     namespace/vmware-system-tsm created
     customresourcedefinition.apiextensions.k8s.io/aspclusters.allspark.vmware.com created
     customresourcedefinition.apiextensions.k8s.io/clusters.client.cluster.tsm.tanzu.vmware.com created
@@ -89,7 +91,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     cronjob.batch/operator-ecr-read-only--renew-token created
     job.batch/operator-ecr-read-only--renew-token created
     job.batch/update-scc-job created
-    ```
+    </pre>
 
 5. Submit the a request to onboard your Kubernetes cluster with the following command. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` you can use whatever name you want here but it would make sense to make it the same as the cluster context name you use for the kube configuration (NOTE: There are restrictions on the allowed characters for a cluster name, use all lower case letters and dashes). Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`.
 
@@ -118,47 +120,50 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     }'
     ```
 
-    Expected:<pre>
+    Expected:
+
+    ```json
     {
-    "displayName": "${CLUSTER_NAME}",
-    "description": "",
-    "tags": [],
-    "labels": [],
-    "autoInstallServiceMesh": false,
-    "enableNamespaceExclusions": true,
-    "namespaceExclusions":
-        [
-        { "match": "kapp-controller", "type": "EXACT" },
-        { "match": "kube-node-lease", "type": "EXACT" },
-        { "match": "kube-public", "type": "EXACT" },
-        { "match": "kube-system", "type": "EXACT" },
-        # DEPENDS ON NAMESPACES INCLUDED IN STEP ABOVE
-        ],
-    "proxyConfig": { "password": "**redacted**" },
-    "id": "${CLUSTER_NAME}",
-    "token": "REDACTED",  # <--------------------- ONBOARDING TOKEN HERE
-    "registered": false,
-    "systemNamespaceExclusions":
-        [
-        { "match": "allspark", "type": "EXACT" },
-        { "match": "gatekeeper-system", "type": "EXACT" },
-        { "match": "istio-system", "type": "EXACT" },
-        { "match": "metallb-system", "type": "EXACT" },
-        { "match": "nsx-system", "type": "EXACT" },
-        { "match": "pks-system", "type": "EXACT" },
-        { "match": "tanzu-observability-saas", "type": "EXACT" },
-        { "match": "velero", "type": "EXACT" },
-        { "match": "kube-", "type": "START_WITH" },
-        { "match": "openshift", "type": "START_WITH" },
-        { "match": "vmware-system-", "type": "START_WITH" },
-        { "match": "avi-system", "type": "EXACT" },
-        ],
-    "proxy": "",
-    "autoInstallServiceMeshConfig": { "restrictDefaultExternalAccess": false },
-    "registryAccount": "",
-    "caLabels": [],
+        "displayName": "${CLUSTER_NAME}",
+        "description": "",
+        "tags": [],
+        "labels": [],
+        "autoInstallServiceMesh": false,
+        "enableNamespaceExclusions": true,
+        "namespaceExclusions":
+            [
+            { "match": "kapp-controller", "type": "EXACT" },
+            { "match": "kube-node-lease", "type": "EXACT" },
+            { "match": "kube-public", "type": "EXACT" },
+            { "match": "kube-system", "type": "EXACT" },
+            # DEPENDS ON NAMESPACES INCLUDED IN STEP ABOVE
+            ],
+        "proxyConfig": { "password": "**redacted**" },
+        "id": "${CLUSTER_NAME}",
+        "token": "REDACTED",  # <--------------------- ONBOARDING TOKEN HERE
+        "registered": false,
+        "systemNamespaceExclusions":
+            [
+            { "match": "allspark", "type": "EXACT" },
+            { "match": "gatekeeper-system", "type": "EXACT" },
+            { "match": "istio-system", "type": "EXACT" },
+            { "match": "metallb-system", "type": "EXACT" },
+            { "match": "nsx-system", "type": "EXACT" },
+            { "match": "pks-system", "type": "EXACT" },
+            { "match": "tanzu-observability-saas", "type": "EXACT" },
+            { "match": "velero", "type": "EXACT" },
+            { "match": "kube-", "type": "START_WITH" },
+            { "match": "openshift", "type": "START_WITH" },
+            { "match": "vmware-system-", "type": "START_WITH" },
+            { "match": "avi-system", "type": "EXACT" },
+            ],
+        "proxy": "",
+        "autoInstallServiceMeshConfig": { "restrictDefaultExternalAccess": false },
+        "registryAccount": "",
+        "caLabels": [],
+    ...
     }
-    </pre>
+    ```
 
 6. Generate a private secret to allow TSM to establish secure connection to the global TSM control plane. Run the following command with the `token` value from the previous step for the `${TSM_ONBOARDING_TOKEN}` variable.
 
@@ -166,11 +171,9 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     kubectl -n vmware-system-tsm create secret generic cluster-token --from-literal=token=${TSM_ONBOARDING_TOKEN}
     ```
 
-    Expected:
-
-    ```bash
+    Expected:<pre>
     secret/cluster-token created
-    ```
+    </pre>
 
 7. Validate that TSM was able to make a secure connection to the global TSM control plane. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`.
 
@@ -180,34 +183,34 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
     Expected:
 
-    ```bash
+    ```json
     {
-    "displayName": "${CLUSTER_NAME}",
-    "description": "",
-    "tags": [],
-    "labels": [],
-    "autoInstallServiceMesh": false,
-    "enableNamespaceExclusions": true,
-    "namespaceExclusions": [
+        "displayName": "${CLUSTER_NAME}",
+        "description": "",
+        "tags": [],
+        "labels": [],
+        "autoInstallServiceMesh": false,
+        "enableNamespaceExclusions": true,
+        "namespaceExclusions": [
         ...
-    ],
-    "proxyConfig": {
-        "password": "**redacted**"
-    },
-    "id": "${CLUSTER_NAME}",
-    "name": "${CLUSTER_NAME}",
-    "type": "Kubernetes",
-    "version": "v1.21.8+vmware.1",
-    "status": {
-        "state": "Connected",  # <---------------------  MAKE SURE THIS SAYS CONNECTED
-        "metadata": {
-        "substate": "",
-        "progress": 0
+        ],
+        "proxyConfig": {
+            "password": "**redacted**"
         },
-        "code": 0,
-        "message": "Cluster registration succeeded",
-        "updateTimestamp": "2022-06-23T19:47:14Z"
-    },
+        "id": "${CLUSTER_NAME}",
+        "name": "${CLUSTER_NAME}",
+        "type": "Kubernetes",
+        "version": "v1.21.8+vmware.1",
+        "status": {
+            "state": "Connected",  # <---------------------  MAKE SURE THIS SAYS CONNECTED
+            "metadata": {
+            "substate": "",
+            "progress": 0
+            },
+            "code": 0,
+            "message": "Cluster registration succeeded",
+            "updateTimestamp": "2022-06-23T19:47:14Z"
+        },
     ...
     }
     ```
@@ -220,8 +223,10 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
     Expected:
 
-    ```bash
-    {"id":"<REDACTED>"}
+    ```json
+    {
+        "id":"<REDACTED>"
+    }
     ```
 
 9. The TSM installation can take a couple minutes. To check/validate the status of the installation run the following. For the `${TSM_SERVER_NAME}` value add your given TSM POC server. For `${CLUSTER_NAME}` use the name you provided in the previous steps. Use the `auth_token` value from previous authentication step for `${CSP_AUTH_TOKEN}`.
@@ -232,36 +237,40 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
     Expected:
 
-    ```bash
+    ```json
+    {
     ...
-    "status": {
-        "state": "Installing", # <---------------------  TSM is INSTALLING
-        "metadata": {
-        "substate": "",
-        "progress": 60
+        "status": {
+            "state": "Installing", # <---------------------  TSM is INSTALLING
+            "metadata": {
+            "substate": "",
+            "progress": 60
+            },
+            "code": 0,
+            "message": "Installing mesh dependencies...", # <--------------------- PROGRESS MESSAGING
+            "updateTimestamp": "2022-06-23T19:57:03Z"
         },
-        "code": 0,
-        "message": "Installing mesh dependencies...", # <--------------------- PROGRESS MESSAGING
-        "updateTimestamp": "2022-06-23T19:57:03Z"
-    },
     ...
+    }
     ```
 
     State should go from `Installing` to `Ready` when TSM installation is complete.
 
-    ```bash
+    ```json
+    {
     ...
-    "status": {
-        "state": "Ready", # <---------------------  MAKE SURE THIS GOES FROM `Installing` TO `Ready`
-        "metadata": {
-        "substate": "",
-        "progress": 0
+        "status": {
+            "state": "Ready", # <---------------------  MAKE SURE THIS GOES FROM `Installing` TO `Ready`
+            "metadata": {
+            "substate": "",
+            "progress": 0
+            },
+            "code": 0,
+            "message": "",
+            "updateTimestamp": "2022-06-23T19:57:53Z"
         },
-        "code": 0,
-        "message": "",
-        "updateTimestamp": "2022-06-23T19:57:53Z"
-    },
     ...
+    }
     ```
 
 10. Validate an external Loadbalancer was created
@@ -270,11 +279,9 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     kubectl get svc -A | grep LoadBalancer
     ```
 
-    Expected:
-
-    ```sh
-    istio-system              istio-ingressgateway            LoadBalancer   100.68.30.11     <REDACTED>.us-west-2.elb.amazonaws.com   15021:31714/TCP,80:31268/TCP,443:32006/TCP   11d
-    ```
+    Expected:<pre>
+    istio-system              istio-ingressgateway            LoadBalancer   100.68.30.11     <b><font color="yellow">`<REDACTED>`.us-west-2.elb.amazonaws.com</font></b>   15021:31714/TCP,80:31268/TCP,443:32006/TCP   11d
+    </pre>
 
 ---
 
