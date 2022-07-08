@@ -68,7 +68,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
 
     Expected:<pre>
     ...
-    <b><font color="yellow">${KUBERNETES_CLUSTER2_NAMESPACE}</font><b>
+    <b><font color="yellow">${KUBERNETES_CLUSTER2_NAMESPACE}</font></b>
     istio-system
     kapp-controller
     kube-node-lease
@@ -261,7 +261,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
 
     Expected:<pre>
     ...
-    <b><font color="yellow">${KUBERNETES_CLUSTER1_NAMESPACE}</font><b>
+    <b><font color="yellow">${KUBERNETES_CLUSTER1_NAMESPACE}</font></b>
     istio-system
     kapp-controller
     kube-node-lease
