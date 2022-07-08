@@ -22,7 +22,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 ## Prerequisites
 
 * Completion of Validating TSM Console Access [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
-* Valid `kubeconfig` for targeted Kubernetes Cluster
+* Valid `kubeconfig` for targeted Kubernetes Cluster `${KUBERNETES_CLUSTER1}`
 
 ---
 

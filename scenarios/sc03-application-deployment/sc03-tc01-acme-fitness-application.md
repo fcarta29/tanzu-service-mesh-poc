@@ -12,9 +12,9 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
 
 ## Prerequisites
 
-* Completion of TSM Console access [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
+* Completion of Validating TSM Console Access [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
 * For Kubernetes Cluster `${KUBERNETES_CLUSTER1}` completion of TSM Onboarding [SC02-TC01](../sc02-cluster-onboarding/sc02-tc01-onboard-tsm-ui.md) or [SC02-TC02](../sc02-cluster-onboarding/sc02-tc02-onboard-tmc.md) or [SC02-TC03](../sc02-cluster-onboarding/sc02-tc03-onboard-tsm-api.md)
-* Valid `kubeconfig` and token for targeted Kubernetes Cluster
+* Valid `kubeconfig` for targeted Kubernetes Cluster `${KUBERNETES_CLUSTER1}`
 
 ---
 
@@ -57,7 +57,7 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
 
     Expected:<pre>
     ...
-    <b><font color="yellow">${KUBERNETES_CLUSTER1_NAMESPACE}</font><b>
+    <b><font color="yellow">${KUBERNETES_CLUSTER1_NAMESPACE}</font></b>
     istio-system
     kapp-controller
     kube-node-lease
@@ -91,7 +91,8 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
     kubectl apply -f scenarios/files/acme-fitness-app/app/acme-secrets.yaml
     kubectl apply -f scenarios/files/acme-fitness-app/app/acme-fitness-catalog-west.yaml
     ```
-
+    > **_NOTE:_**  This will only deploy the version of catalog service with the `US-WEST` watermarked images.
+    
     Expected:<pre>
     deployment.apps/cart-redis created
     service/cart created
@@ -181,7 +182,7 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
 
     ---
     ACME Fitness Application (as seen in the browser)
-    ![ACME Fitness Application](../images/acme-fitness-home.png)
+    ![ACME Fitness Application](../images/acme-fitness-home-west.png)
 
 7. In order for the Service Topology to build out in the TSM console lets generate some traffic for the ACME Fitness Application.
 
@@ -204,7 +205,7 @@ This scenario test case captures how to deploy the ACME Fitness sample applicati
     NAME                            READY   STATUS    RESTARTS   AGE
     cart-844fcb9497-qkc4x           2/2     Running   0          11m
     cart-redis-df554fbb7-vs5m6      2/2     Running   0          11m
-    <b><font color="yellow">loadgenerator-fbfdf7d99-jkb9g   2/2     Running   0          10s</font><b>
+    <b><font color="yellow">loadgenerator-fbfdf7d99-jkb9g   2/2     Running   0          10s</font></b>
     order-55b6987599-l42xj          2/2     Running   0          11m
     order-mongo-7ccdbd8869-mj8qc    2/2     Running   0          11m
     payment-6977b8df86-rmfph        2/2     Running   0          11m
