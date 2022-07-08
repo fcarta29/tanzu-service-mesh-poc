@@ -16,13 +16,13 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 * Generating an API Token to Interact with VMware Cloud Service APIs [Generating an API Token to Interact with VMware Cloud Service APIs](https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-E2A3B1C1-E9AD-4B00-A6B6-88D31FCDDF7C.html)
 * Tanzu Service Mesh API [Tanzu Service Mesh API](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/api-programming-guide/GUID-FED8E849-B3C3-49ED-9FDB-1317CFFF3141.html)
 * Supported Platforms [Tanzu Service Mesh Supported Platforms](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/tanzu-service-mesh-environment-requirements-and-supported-platforms/GUID-D0B939BE-474E-4075-9A65-3D72B5B9F237.html#supported-platforms-1)
-* Valid `kubeconfig` and token for targeted Kubernetes Cluster
 
 ---
 
 ## Prerequisites
 
-* Completion of [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
+* Completion of Validating TSM Console Access [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
+* Valid `kubeconfig` for targeted Kubernetes Cluster
 
 ---
 
@@ -102,7 +102,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
 
     Expected:<pre>
     ...
-    <b><font color="yellow">${KUBERNETES_CLUSTER1_NAMESPACE}</font><b>
+    <b><font color="yellow">${KUBERNETES_CLUSTER1_NAMESPACE}</font></b>
     istio-system
     kapp-controller
     kube-node-lease
@@ -162,7 +162,7 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     ```bash
     curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha1/clusters/${CLUSTER_NAME}?createOnly=true" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
     {
-        "displayName": "${CLUSTER_NAME}",
+        "displayName": "'"${CLUSTER_NAME}"'",
         "description": "",
         "tags": [],
         "autoInstallServiceMesh": false,
@@ -180,7 +180,9 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
             "match": "kube-system",
             "type": "EXACT"
         },{
-        ... ADD/REMOVE NAMESPACES YOU WANT TO EXCLUDE
+    ...    
+        # ADD/REMOVE NAMESPACES YOU WANT TO EXCLUDE
+    ...    
         }]
     }'
     ```
@@ -195,37 +197,12 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
         "labels": [],
         "autoInstallServiceMesh": false,
         "enableNamespaceExclusions": true,
-        "namespaceExclusions":
-            [
-            { "match": "kapp-controller", "type": "EXACT" },
-            { "match": "kube-node-lease", "type": "EXACT" },
-            { "match": "kube-public", "type": "EXACT" },
-            { "match": "kube-system", "type": "EXACT" },
-            # DEPENDS ON NAMESPACES INCLUDED IN STEP ABOVE
-            ],
+    ...
         "proxyConfig": { "password": "**redacted**" },
         "id": "${CLUSTER_NAME}",
         "token": "REDACTED",  # <--------------------- ONBOARDING TOKEN HERE
         "registered": false,
         "systemNamespaceExclusions":
-            [
-            { "match": "allspark", "type": "EXACT" },
-            { "match": "gatekeeper-system", "type": "EXACT" },
-            { "match": "istio-system", "type": "EXACT" },
-            { "match": "metallb-system", "type": "EXACT" },
-            { "match": "nsx-system", "type": "EXACT" },
-            { "match": "pks-system", "type": "EXACT" },
-            { "match": "tanzu-observability-saas", "type": "EXACT" },
-            { "match": "velero", "type": "EXACT" },
-            { "match": "kube-", "type": "START_WITH" },
-            { "match": "openshift", "type": "START_WITH" },
-            { "match": "vmware-system-", "type": "START_WITH" },
-            { "match": "avi-system", "type": "EXACT" },
-            ],
-        "proxy": "",
-        "autoInstallServiceMeshConfig": { "restrictDefaultExternalAccess": false },
-        "registryAccount": "",
-        "caLabels": [],
     ...
     }
     ```
