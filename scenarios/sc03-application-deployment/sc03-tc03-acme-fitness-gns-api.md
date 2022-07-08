@@ -137,33 +137,39 @@ This test procedure assumes that the full ACME Fitness Application along with th
     }
     ```
 
+    > **_NOTE:_**  You can directly assign and obtain the `auth_token` with the following:
+
+    ```execute
+    export CSP_AUTH_TOKEN=$(curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}" | jq -r '.access_token')
+    ```
+
 6. Create a Global Namespace (GNS) . Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
 
     ```bash
     curl -k -X POST "https://${TSM_SERVER_NAME}/tsm/v1alpha1/global-namespaces" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
     {
-        "name": "${TSM_GLOBALNAMESPACE_NAME}",
-        "display_name": "${TSM_GLOBALNAMESPACE_NAME}",
-        "domain_name": "${TSM_GLOBALNAMESPACE_DOMAIN}",
+        "name": "'"${TSM_GLOBALNAMESPACE_NAME}"'",
+        "display_name": "'"${TSM_GLOBALNAMESPACE_NAME}"'",
+        "domain_name": "'"${TSM_GLOBALNAMESPACE_DOMAIN}"'",
         "mtls_enforced": true,
         "version": "1.0",
         "match_conditions":[{
             "namespace":{
                 "type": "EXACT",
-                "match": "${KUBERNETES_CLUSTER1_NAMESPACE}"
+                "match": "'"${KUBERNETES_CLUSTER1_NAMESPACE}"'"
             },
             "cluster":{
                 "type": "EXACT",
-                "match": "${KUBERNETES_CLUSTER1}"
+                "match": "'"${KUBERNETES_CLUSTER1}"'"
             }
         },{
             "namespace":{
                 "type": "EXACT",
-                "match": "${KUBERNETES_CLUSTER2_NAMESPACE}"
+                "match": "'"${KUBERNETES_CLUSTER2_NAMESPACE}"'"
             },
             "cluster":{
                 "type": "EXACT",
-                "match": "${KUBERNETES_CLUSTER2}"
+                "match": "'"${KUBERNETES_CLUSTER2}"'"
             }
         }]
     }'

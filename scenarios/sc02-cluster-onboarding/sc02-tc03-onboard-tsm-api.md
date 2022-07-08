@@ -51,6 +51,12 @@ This scenario test case captures how to onboard a Kubernetes cluster to Tanzu Se
     }
     ```
 
+    > **_NOTE:_**  You can directly assign and obtain the `auth_token` with the following:
+
+    ```execute
+    export CSP_AUTH_TOKEN=$(curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}" | jq -r '.access_token')
+    ```
+
 3. Begin onboarding your Kubernetes Cluster by retrieiving the TSM onboarding url. Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
 
     ```execute
