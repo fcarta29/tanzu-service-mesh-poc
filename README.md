@@ -67,13 +67,15 @@ Test Case ID | Test Case Description |
 #### Scenario SC02: Cluster Onboarding
 
 Test Case ID | Test Case Description |
-[SC02-TC03](scenarios/sc02-cluster-onboarding/sc02-tc03-onboard-tsm-api.md) | Using TSM REST API |
 --- | --- |
+[SC02-TC03](scenarios/sc02-cluster-onboarding/sc02-tc03-onboard-tsm-api.md) | Using TSM REST API |
 
 #### Scenario SC03: Application Deployment
+
 Test Case ID | Test Case Description |
-[SC03-TC01](scenarios/sc03-application-deployment/sc03-tc01-acme-fitness-application.md) | Deploying ACME Fitness Sample Application |
 --- | --- |
+[SC03-TC01](scenarios/sc03-application-deployment/sc03-tc01-acme-fitness-application.md) | Deploying ACME Fitness Sample Application |
+[SC03-TC03](scenarios/sc03-application-deployment/sc03-tc03-acme-fitness-gns-api.md) | Creating a Global Namespace for a Multi-Cluster ACME Fitness Application Deployment (East/West) |
 
 #### Scenario SC04: Application Observability
 
@@ -85,7 +87,7 @@ Test Case ID | Test Case Description |
 
 Test Case ID | Test Case Description |
 --- | --- |
---- | --- |
+[SC05-TC01](scenarios/sc05-application-resiliency/sc05-tc01-traffic-management-api.md) | Traffic Management for the Catalog (East/West) service of the ACME Fitness Application |
 
 #### Scenario SC06: Application Performance
 
