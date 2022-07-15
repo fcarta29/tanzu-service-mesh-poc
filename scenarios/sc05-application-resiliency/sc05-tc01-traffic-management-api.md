@@ -60,7 +60,56 @@ This test procedure assumes that the full ACME Fitness Application along with th
     export CSP_AUTH_TOKEN=$(curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}" | jq -r '.access_token')
     ```
 
-3. Create Traffic Policy
+3. Check for any existing Traffic Policies applied to the `catalog` service. If there are any existing Traffic Policies you will want to delete or reuse just one in the following steps (For this POC its best to just have one Traffic Policy per service for simplicity).
+
+    ```bash
+    curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/?service=catalog" -H "csp-auth-token:${CSP_AUTH_TOKEN}" | jq .
+    ```
+
+    Expected (If Traffic Policy Exists):
+
+    ```json
+    [{
+        "service": "catalog",
+        "traffic_policy": {
+        "http": [
+            {
+            "targets": [
+                {
+                "service_version": "v1-west",
+                "weight": 50
+                },
+                {
+                "service_version": "v1-east",
+                "weight": 50
+                }
+            ]
+            }
+        ]
+        },
+        "id": "${CATALOG_POLICY_NAME}" # <--------- Reuse this name
+    }]
+    ```
+
+    Expected (If NO Traffic Policy Exists):
+
+    ```json
+    []
+    ```
+
+4. Optional: If desired, here is how you can delete Traffic Policies.
+
+    ```bash
+    curl -k -X DELETE "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" 
+    ```
+
+    Expected:<pre>
+    gns routing policy with id ${CATALOG_POLICY_NAME} deleted in gns acme-fitness-poc-gns.
+    </pre>
+
+5. Create/Update a Traffic Policy to send all the traffic to the East version of the catalog service. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. If traffic policy already exists from previous steps you will want to either remove that policy or reuse the same name and update with the call below.
+
+    To Create or Update Traffic Policy.
 
     ```bash
     curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
@@ -68,41 +117,92 @@ This test procedure assumes that the full ACME Fitness Application along with th
         "description": "weighted policy to send 100% of traffic to the east catalog images",
         "service": "catalog",
         "traffic_policy": {
-            "http": [
-            {
-                "targets": [
-                {
+            "http": [{
+                "targets": [{
                     "service_version": "v1-west",
                     "weight": 0
-                },
-                {
+                },{
                     "service_version": "v1-east",
                     "weight": 100
-                }
-                ]
-            }
-            ]
+                }]
+            }]
         }
-    }'
+    }' | jq .
     ```
 
     Expected:
 
     ```json
     {
-        "name":
+        "service":"catalog",
+        "traffic_policy":{
+            "http":[{
+                "targets":[{
+                    "service_version":"v1-west",
+                    "weight":100
+                },{
+                    "service_version":"v1-east"
+                }]
+            }]
+        },
+        "id":"${CATALOG_POLICY_NAME}"
     }
     ```
 
-4. Validate catalog images 
+6. Once the Traffic Policy is applied it will take about a minute to be able to validate via browser that the ACME Fitness Application is showing all East catalog images (You may need clear/disable caching).
 
-5. Set policyid 
+    ---
+    ACME Fitness Application Traffic Policy All East (East Only Images)
+    ![ACME Fitness Application Traffic Policy All East ](../images/acme-fitness-home-east.png)
 
-    ```sh
-    export TRAFFIC_POLICY_ID=<PUT_CATALOG_ID_HERE>
+7. Apply policy based on query parameters
+
+8. validate query param routing
+
+9. Apply policy based on header param
+
+10. validate header param routing
+
+11. Optional: Reset the Traffic Policy for the `catalog` service to 50/50 between East/West catalog images.
+
+    ```bash
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
+    {
+        "description": "",
+        "service": "catalog",
+        "traffic_policy": {
+            "http": [{
+                "targets": [{
+                    "service_version": "v1-west",
+                    "weight": 50
+                },{
+                    "service_version": "v1-east",
+                    "weight": 50
+                }]
+            }]
+        }                  
+    }' | jq .
     ```
 
-6. Switch catalog back to 50/50
+    Expected:
+
+    ```json
+    {
+        "service": "catalog",
+        "traffic_policy": {
+            "http": [{
+                "targets": [{
+                    "service_version": "v1-west",
+                    "weight": 50
+                },{
+                    "service_version": "v1-east",
+                    "weight": 50
+                }]
+            }]
+        },
+        "id": "${CATALOG_POLICY_NAME}"
+    }
+    ```
 
 ---
 

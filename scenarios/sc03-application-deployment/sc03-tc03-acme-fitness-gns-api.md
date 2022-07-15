@@ -333,11 +333,52 @@ This test procedure assumes that the full ACME Fitness Application along with th
     deployment.apps/shopping edited
     </pre>
 
-11. Validate that traffic is flowing between the ACME Fitness Application across the two(2) Kubernetes Clusters ( `${KUBERNETES_CLUSTER1}` , `${KUBERNETES_CLUSTER2}` ) over the GNS. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services. Also validate via browser that the ACME Fitness Application is showing both the East and West catalog images (You may need clear/disable caching to see images rotate).
+11. Validate that traffic is flowing between the ACME Fitness Application across the two(2) Kubernetes Clusters ( `${KUBERNETES_CLUSTER1}` , `${KUBERNETES_CLUSTER2}` ) over the GNS. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services.
 
     ---
     TSM GNS Overview - GNS Topology for ACME Fitness Application
     ![TSM Cluster Overview](../images/vmware-tsm-gns-service-topology-acme-fitness.png)
+
+12. Optional: To evenly split the catalog items between East/West images you will need to create a traffic policy. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. Once applied it will take about a minute to be able to validate via browser that the ACME Fitness Application is showing both the East and West catalog images (You may need clear/disable caching to see images rotate).
+
+    ```bash
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
+    {
+        "description": "weighted policy to send 100% of traffic to the east catalog images",
+        "service": "catalog",
+        "traffic_policy": {
+            "http": [{
+                "targets": [{
+                    "service_version": "v1-west",
+                    "weight": 50
+                },{
+                    "service_version": "v1-east",
+                    "weight": 50
+                }]
+            }]
+        }
+    }' | jq .
+    ```
+
+    Expected:
+
+    ```json
+    {
+        "service":"catalog",
+        "traffic_policy":{
+            "http":[{
+                "targets":[{
+                    "service_version":"v1-west",
+                    "weight":50
+                },{
+                    "service_version":"v1-east",
+                    "weight":50
+                }]
+            }]
+        },
+        "id":"catalog-traffic-policy-west"
+    }
+    ```
 
     ---
     ACME Fitness Application over GNS (East/West Images)
