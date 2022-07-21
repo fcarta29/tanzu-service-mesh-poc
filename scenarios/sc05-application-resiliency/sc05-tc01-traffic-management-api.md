@@ -107,7 +107,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     gns routing policy with id ${CATALOG_POLICY_NAME} deleted in gns acme-fitness-poc-gns.
     </pre>
 
-5. Create/Update a Traffic Policy to send all the traffic to the East version of the catalog service. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. If traffic policy already exists from previous steps you will want to either remove that policy or reuse the same name and update with the call below.
+5. Create/Update a weight-based Traffic Policy to send all request traffic to the East version of the catalog service. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. If traffic policy already exists from previous steps you will want to either remove that policy or reuse the same name and update with the call below.
 
     To Create or Update Traffic Policy.
 
@@ -155,11 +155,117 @@ This test procedure assumes that the full ACME Fitness Application along with th
     ACME Fitness Application Traffic Policy All East (East Only Images)
     ![ACME Fitness Application Traffic Policy All East ](../images/acme-fitness-home-east.png)
 
-7. Apply policy based on query parameters
+7. TODO[fcarta] - NOT Working getting error - (Apply policy based on query parameters)
+
+    ```json
+    {
+    "code": 422,
+    "message": "got error handling request :The request body is invalid. See error object `details` property for more info.\n[\n    {\n        \"path\": \".traffic_policy.http[0].matches[0]\",\n        \"code\": \"additionalProperties\",\n        \"message\": \"should NOT have additional properties\",\n        \"info\": {\n            \"additionalProperty\": \"queryParams\"\n        }\n    }\n]",
+    "name": "UnprocessableEntityError"
+    }
+    ```
+
+    ```bash
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
+    {
+        "description": "policy to route traffic that comes with request `catalog-site: east` in query parameter to East Catalog images otherwise send to West Catalog images ",
+        "service": "catalog",
+        "traffic_policy": {
+            "http": [{
+                "name": "catalog-site-based",
+                "matches": [{
+                    "queryParams": {
+                        "type": "Exact",
+                        "value": [{
+                            "k": "catalog-site",
+                            "v": "east"
+                        }]
+                    }
+                }],
+                "targets": [{ 
+                    "service_version": "v1-east"
+                }]
+            },{
+                "targets": [{
+                    "service_version": "v1-west"
+                }]
+            }]
+        }
+    }' | jq .
+    ```
+
+    Expected:
+
+    ```json
+    {
+    }
+    ```
 
 8. validate query param routing
 
-9. Apply policy based on header param
+9. TODO[fcarta] - ACME app needs update to include logged in user data to header first - Apply policy based on header param
+
+    ```bash
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
+    {
+        "description": "policy to route traffic that comes with end-user: eric in header to west catalog images and others to the east images",
+        "service": "catalog",
+        "traffic_policy": {
+            "http": [{
+                "name": "user-based",
+                "matches": [{
+                    "headers": {
+                        "type": "Exact",
+                        "value": [{
+                            "k": "end-user",
+                            "v": "eric"
+                        }]
+                    }
+                }],
+                "targets": [{
+                    "service_version": "v1-west"
+                }]
+            },{
+                "targets": [{
+                    "service_version": "v1-east"
+                }]
+            }]
+        }
+    }' | jq .
+    ```
+
+    Expected:
+
+    ```json
+    {
+        "description": "policy to route traffic that comes with end-user: eric in header to west catalog images and others to the east images",
+        "service": "catalog",
+        "traffic_policy": {
+            "http": [{
+                "name": "user-based",
+                "matches": [{
+                    "headers": {
+                        "type": "Exact",
+                        "value": [{
+                            "k": "end-user",
+                            "v": "eric"
+                        }]
+                    }
+                }],
+                "targets": [{
+                    "service_version": "v1-west"
+                }]
+            },{
+                "targets": [{
+                    "service_version": "v1-east"
+                }]
+            }]
+        },
+        "id": "${CATALOG_POLICY_NAME}"
+    }
+    ```
+
+    NOTE: The base set of users is preconfigured. For now, please login as one of this set (eric, dwight, han, or phoebe). The password for these users is 'vmware1!'
 
 10. validate header param routing
 
