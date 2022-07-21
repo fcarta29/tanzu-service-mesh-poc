@@ -12,6 +12,11 @@ ENV TANZU_CLI_VERSION=v1.3.1
 ENV KUBESEAL_VERSION=v0.15.0
 ENV KREW_VERSION=v0.4.1
 
+# Install Locust for Load generation
+RUN echo "Installing Locust" \
+    && pip3 install locust \
+    && locust -V
+
 # Leave Container Running for SSH Access - SHOULD REMOVE
 ENTRYPOINT ["tail", "-f", "/dev/null"]
 

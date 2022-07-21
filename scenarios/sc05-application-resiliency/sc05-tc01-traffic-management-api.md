@@ -1,4 +1,4 @@
-# SC03-TC01: Application Resiliency with Tanzu Service Mesh (TSM) - Creating Traffic Management Policies
+# SC05-TC01: Application Resiliency with Tanzu Service Mesh (TSM) - Creating Traffic Management Policies
 
 This scenario captures how to create different traffic management policies for application resiliency.
 
