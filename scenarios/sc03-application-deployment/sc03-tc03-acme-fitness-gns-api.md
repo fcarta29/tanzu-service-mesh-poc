@@ -1,4 +1,4 @@
-# SC03-TC01: Application Deployment to Kubernetes Cluster with Tanzu Service Mesh (TSM) - Deploying a Multi-Cluster ACME Fitness Application with a Global Namespace (GNS)
+# SC03-TC03: Application Deployment to Kubernetes Cluster with Tanzu Service Mesh (TSM) - Deploying a Multi-Cluster ACME Fitness Application with a Global Namespace (GNS) Using TSM REST API
 
 This scenario captures how to deploy an application to a Kubernetes Cluster with Tanzu Service Mesh
 
