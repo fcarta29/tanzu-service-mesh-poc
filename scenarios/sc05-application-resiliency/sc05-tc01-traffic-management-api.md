@@ -21,6 +21,7 @@ This scenario test case creates three(3) different traffic management policies: 
 ## Prerequisites
 
 * Completion of TSM Console access [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
+* Completion of API Token Generation and Authentication to the CSP [SC01-TC03](../sc01-environment-setup/sc01-tc03-csp-api-authorization-api.md)
 * For Two(2) Kubernetes Clusters `${KUBERNETES_CLUSTER1}` and `${KUBERNETES_CLUSTER2}` completion of TSM Onboarding  [SC02-TC01](../sc02-cluster-onboarding/sc02-tc01-onboard-tsm-ui.md) or [SC02-TC02](../sc02-cluster-onboarding/sc02-tc02-onboard-tmc.md) or [SC02-TC03](../sc02-cluster-onboarding/sc02-tc03-onboard-tsm-api.md)
 * Completion of ACME Fitness Application Deployment [SC03-TC01](../sc03-application-deployment/sc03-tc01-acme-fitness-application.md)
 * Completion of Global Namespace creation for ACME Fitness Application [SC03-TC03](../sc03-application-deployment/sc03-tc03-acme-fitness-gns-api.md)
@@ -31,36 +32,13 @@ This scenario test case creates three(3) different traffic management policies: 
 
 This test procedure assumes that the full ACME Fitness Application along with the load generator was deployed to the Kubernetes Cluster `${KUBERNETES_CLUSTER1}`.
 
-1. If not already obtained, from the VMware Cloud Services Portal get or generate an API token. Copy the API token and save it to a secure note/place.(NOTE: Typically this would be created for an automation service account)
-
-    ![VMware CSP Create Organization](../images/vmware-csp-my-account-api-token.png)
-
-2. With this API token in place for `${CSP_API_TOKEN}` use the example below to obtain an authentication token from the VMware Cloud Service API. On successful authorization a response including an `access_token` will be returned which should be copied and retained for further API requests.
-
-    ```execute
-    curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "Accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}"
-    ```
-
-    Expected:
-
-    ```json
-    {
-        "id_token": "REDACTED",
-        "token_type": "bearer",
-        "expires_in": 1799,
-        "scope": "ALL_PERMISSIONS customer_number openid group_ids group_names",
-        "access_token": "REDACTED",
-        "refresh_token": "REDACTED"
-    }
-    ```
-
-    > **_NOTE:_**  You can directly assign and obtain the `auth_token` with the following:
+1. If needed renew your Authentication to the CSP [SC01-TC03](../sc01-environment-setup/sc01-tc03-csp-api-authorization-api.md)
 
     ```execute
     export CSP_AUTH_TOKEN=$(curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}" | jq -r '.access_token')
     ```
 
-3. Check for any existing Traffic Policies applied to the `catalog` service. If there are any existing Traffic Policies you will want to delete or reuse just one in the following steps (For this POC its best to just have one Traffic Policy per service for simplicity).
+2. Check for any existing Traffic Policies applied to the `catalog` service. If there are any existing Traffic Policies you will want to delete or reuse just one in the following steps (For this POC its best to just have one Traffic Policy per service for simplicity).
 
     ```bash
     curl -k -X GET "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/?service=catalog" -H "csp-auth-token:${CSP_AUTH_TOKEN}" | jq .
@@ -97,7 +75,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     []
     ```
 
-4. Optional: If desired, here is how you can delete Traffic Policies.
+3. Optional: If desired, here is how you can delete Traffic Policies.
 
     ```bash
     curl -k -X DELETE "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" 
@@ -107,7 +85,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     gns routing policy with id ${CATALOG_POLICY_NAME} deleted in gns acme-fitness-poc-gns.
     </pre>
 
-5. Create/Update a weight-based Traffic Policy to send all request traffic to the East version of the catalog service. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. If traffic policy already exists from previous steps you will want to either remove that policy or reuse the same name and update with the call below.
+4. Create/Update a weight-based Traffic Policy to send all request traffic to the East version of the catalog service. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. If traffic policy already exists from previous steps you will want to either remove that policy or reuse the same name and update with the call below.
 
     To Create or Update Traffic Policy.
 
@@ -149,13 +127,13 @@ This test procedure assumes that the full ACME Fitness Application along with th
     }
     ```
 
-6. Once the Traffic Policy is applied it will take about a minute to be able to validate via browser that the ACME Fitness Application is showing all East catalog images (You may need clear/disable caching).
+5. Once the Traffic Policy is applied it will take about a minute to be able to validate via browser that the ACME Fitness Application is showing all East catalog images (You may need clear/disable caching).
 
     ---
     ACME Fitness Application Traffic Policy All East (East Only Images)
     ![ACME Fitness Application Traffic Policy All East ](../images/acme-fitness-home-east.png)
 
-7. TODO[fcarta] - NOT Working getting error - (Apply policy based on query parameters)
+6. TODO[fcarta] - NOT Working getting error - (Apply policy based on query parameters)
 
     ```json
     {
@@ -201,9 +179,9 @@ This test procedure assumes that the full ACME Fitness Application along with th
     }
     ```
 
-8. validate query param routing
+7. validate query param routing
 
-9. TODO[fcarta] - ACME app needs update to include logged in user data to header first - Apply policy based on header param
+8. TODO[fcarta] - ACME app needs update to include logged in user data to header first - Apply policy based on header param
 
     ```bash
     curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
@@ -267,9 +245,9 @@ This test procedure assumes that the full ACME Fitness Application along with th
 
     NOTE: The base set of users is preconfigured. For now, please login as one of this set (eric, dwight, han, or phoebe). The password for these users is 'vmware1!'
 
-10. validate header param routing
+9. validate header param routing
 
-11. Optional: Reset the Traffic Policy for the `catalog` service to 50/50 between East/West catalog images.
+10. Optional: Reset the Traffic Policy for the `catalog` service to 50/50 between East/West catalog images.
 
     ```bash
     curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '

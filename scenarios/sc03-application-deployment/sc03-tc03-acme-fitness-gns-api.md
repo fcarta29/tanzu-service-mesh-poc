@@ -21,6 +21,7 @@ This scenario test case captures how to create a Tanzu Service Mesh Global Names
 ## Prerequisites
 
 * Completion of TSM Console access [SC01-TC01](../sc01-environment-setup/sc01-tc01-validate-tsm-console.md)
+* Completion of API Token Generation and Authentication to the CSP [SC01-TC03](../sc01-environment-setup/sc01-tc03-csp-api-authorization-api.md)
 * For Two(2) Kubernetes Clusters `${KUBERNETES_CLUSTER1}` and `${KUBERNETES_CLUSTER2}` completion of TSM Onboarding  [SC02-TC01](../sc02-cluster-onboarding/sc02-tc01-onboard-tsm-ui.md) or [SC02-TC02](../sc02-cluster-onboarding/sc02-tc02-onboard-tmc.md) or [SC02-TC03](../sc02-cluster-onboarding/sc02-tc03-onboard-tsm-api.md)
 * Completion of ACME Fitness Application Deployment [SC03-TC01](../sc03-application-deployment/sc03-tc01-acme-fitness-application.md)
 * Valid `kubeconfig` for both targeted Kubernetes Clusters `${KUBERNETES_CLUSTER1}` and `${KUBERNETES_CLUSTER2}`
@@ -114,36 +115,13 @@ This test procedure assumes that the full ACME Fitness Application along with th
     deployment.apps/catalog created
     </pre>
 
-4. If not already obtained, from the VMware Cloud Services Portal get or generate an API token. Copy the API token and save it to a secure note/place.(NOTE: Typically this would be created for an automation service account)
-
-    ![VMware CSP Create Organization](../images/vmware-csp-my-account-api-token.png)
-
-5. With this API token in place for `${CSP_API_TOKEN}` use the example below to obtain an authentication token from the VMware Cloud Service API. On successful authorization a response including an `access_token` will be returned which should be copied and retained for further API requests.
-
-    ```execute
-    curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "Accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}"
-    ```
-
-    Expected:
-
-    ```json
-    {
-        "id_token": "REDACTED",
-        "token_type": "bearer",
-        "expires_in": 1799,
-        "scope": "ALL_PERMISSIONS customer_number openid group_ids group_names",
-        "access_token": "REDACTED",
-        "refresh_token": "REDACTED"
-    }
-    ```
-
-    > **_NOTE:_**  You can directly assign and obtain the `auth_token` with the following:
+4. If needed renew your Authentication to the CSP [SC01-TC03](../sc01-environment-setup/sc01-tc03-csp-api-authorization-api.md)
 
     ```execute
     export CSP_AUTH_TOKEN=$(curl -k -X POST "https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "refresh_token=${CSP_API_TOKEN}" | jq -r '.access_token')
     ```
 
-6. Create a Global Namespace (GNS) . Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
+5. Create a Global Namespace (GNS) . Execute the following REST API call by using your given TSM POC server value for the `${TSM_SERVER_NAME}` variable and the `access_token` obtained from the previous step as the value for the `${CSP_AUTH_TOKEN}` variable.
 
     ```bash
     curl -k -X POST "https://${TSM_SERVER_NAME}/tsm/v1alpha1/global-namespaces" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
@@ -212,7 +190,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     }
     ```
 
-7. Validate the GNS was created via the TSM console. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services. NOTE connection between the Kubernets Clusters will not show until we configure the `shopping` deployment in the following steps.
+6. Validate the GNS was created via the TSM console. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services. NOTE connection between the Kubernets Clusters will not show until we configure the `shopping` deployment in the following steps.
 
     Expected:
 
@@ -224,7 +202,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     TSM GNS Overview - GNS Topology for ACME Fitness Application
     ![TSM Cluster Overview](../images/vmware-tsm-gns-service-topology-acme-fitness.png)
 
-8. Now that the GNS has been successfully created we need to configure the ACME Fitness `shopping` deployment to now point to the `catalog` service connected to the GNS domain and not the default local `catalog` service. To do this we must switch back our `kubectl context` back to the first cluster Kubernetes Cluster `${KUBERNETES_CLUSTER1}`. Confirm you are connected the right Kubernetes cluster `${KUBERNETES_CLUSTER1_CONTEXT}`, if working from the supplied Management container you can run the following:
+7. Now that the GNS has been successfully created we need to configure the ACME Fitness `shopping` deployment to now point to the `catalog` service connected to the GNS domain and not the default local `catalog` service. To do this we must switch back our `kubectl context` back to the first cluster Kubernetes Cluster `${KUBERNETES_CLUSTER1}`. Confirm you are connected the right Kubernetes cluster `${KUBERNETES_CLUSTER1_CONTEXT}`, if working from the supplied Management container you can run the following:
 
     ```execute
     kubectx
@@ -253,7 +231,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     kubectl config set-context ${KUBERNETES_CLUSTER1_CONTEXT}
     ```
 
-9. Confirm your preferred namespace is set to `${KUBERNETES_CLUSTER1_NAMESPACE}` (Using `default` as the namespace works fine.), if working from the supplied Management container you can run the following:
+8. Confirm your preferred namespace is set to `${KUBERNETES_CLUSTER1_NAMESPACE}` (Using `default` as the namespace works fine.), if working from the supplied Management container you can run the following:
 
     ```execute
     kubens
@@ -287,7 +265,7 @@ This test procedure assumes that the full ACME Fitness Application along with th
     kubectl config set-context --current --namespace=${KUBERNETES_CLUSTER1_NAMESPACE}
     ```
 
-10. Edit the shopping deployment to use the GNS `catalog` service instead of the local service.
+9. Edit the shopping deployment to use the GNS `catalog` service instead of the local service.
 
     ```execute
     kubectl edit deploy/shopping
@@ -333,13 +311,13 @@ This test procedure assumes that the full ACME Fitness Application along with th
     deployment.apps/shopping edited
     </pre>
 
-11. Validate that traffic is flowing between the ACME Fitness Application across the two(2) Kubernetes Clusters ( `${KUBERNETES_CLUSTER1}` , `${KUBERNETES_CLUSTER2}` ) over the GNS. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services.
+10. Validate that traffic is flowing between the ACME Fitness Application across the two(2) Kubernetes Clusters ( `${KUBERNETES_CLUSTER1}` , `${KUBERNETES_CLUSTER2}` ) over the GNS. Navigate to the `GNS Overview` tab on the `Home` page and click on the GNS `${TSM_GLOBALNAMESPACE_NAME}`. On the GNS Overview page under the `GNS Topology` tab you should see both the Kubernetes Clusters and the ACME Fitness Appliction services.
 
     ---
     TSM GNS Overview - GNS Topology for ACME Fitness Application
     ![TSM Cluster Overview](../images/vmware-tsm-gns-service-topology-acme-fitness.png)
 
-12. Optional: To evenly split the catalog items between East/West images you will need to create a traffic policy. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. Once applied it will take about a minute to be able to validate via browser that the ACME Fitness Application is showing both the East and West catalog images (You may need clear/disable caching to see images rotate).
+11. Optional: To evenly split the catalog items between East/West images you will need to create a traffic policy. The `$CATALOG_POLICY_NAME` variable can be set to any name you wish to assign to the new traffic policy. Once applied it will take about a minute to be able to validate via browser that the ACME Fitness Application is showing both the East and West catalog images (You may need clear/disable caching to see images rotate).
 
     ```bash
     curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha2/project/default/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/traffic-routing-policies/${CATALOG_POLICY_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
