@@ -67,7 +67,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
 4. Create a monitored SLO for the `shopping` service.
 
-    > **_NOTE:_**  The example below defines a latency for the `shopping` service at a P99 latency of `100ms` and this value may differ on your environment. Observe a baseline P99 latency for the `shopping` service and chose a value slight above for your SLO value.
+    > **_NOTE:_**  The example below defines a latency for the `shopping` service at a P99 latency of `100ms` and this value may differ on your environment. Observe a baseline P99 latency for the `shopping` service and chose a value slightly above for your SLO value.
 
     ![VMware SLO Policy](../images/vmware-tsm-app-topology-p99-latency.png)
 
@@ -135,7 +135,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
     ![VMware SLO Policy Status](../images/vmware-tsm-slo-status.png)
 
-6. Generate traffic to the ACME Fitness Application to violate the SLO. Fire up the locust traffic generator application using the given locust file `/scenarios/files/acme-fitness-app/loadgen/locustfile.py` supplied with this project. Its best to start locust in distributed worker mode with 2 workers. If working from the supplied Management container, to start up locust in distributed worker mode with 2 workers, you can run the following in seperate windows/tabs:
+6. Generate traffic to the ACME Fitness Application to violate the newly created SLO from previous steps. Fire up the locust traffic generator application using the given locust file `/scenarios/files/acme-fitness-app/loadgen/locustfile.py` supplied with this project. Its best to start locust in distributed mode with 2 workers. If working from the supplied Management container, to start up locust in distributed worker mode with 2 workers, you can run the following in seperate windows/tabs:
 
     master
 
@@ -170,7 +170,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
     ![Traffic Generation Locust - Statistics](../images/traffic-gen-locust-statistics.png)
 
-8. After about a minute of load generation from the previous step navigate back to the TSM UI and view the GNS performance metrics. Scroll down to the P99 Latency metric and observe the rise in wait time for the `shopping` service as the number of requests.
+8. After about a minute of load generation from the previous step, navigate to the GNS performance metrics via the TSM UI. Scroll down to the `P99 Latency` metric and observe the rise in wait time for the `shopping` service as the number of requests increases.
 
     ![TSM GNS Performance](../images/vmware-tsm-gns-performance.png)
 
@@ -178,7 +178,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
     ![TSM GNS Performance - latency rising](../images/vmware-tsm-gns-performance-p99-latency.png)
 
-9. Navigate to the SLO Status and view violation there
+9. In the TSM UI navigate back to the `SLO Status` page and view the SLO violation for `P99 Latency` of the shopping service.
 
     ![TSM SLO Status](../images/vmware-tsm-slo-status.png)
 
