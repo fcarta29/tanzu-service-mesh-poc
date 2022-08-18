@@ -72,14 +72,14 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
     ![VMware SLO Policy](../images/vmware-tsm-app-topology-p99-latency.png)
 
     ```bash
-    curl -k -X POST "https://${TSM_SERVER_NAME}/tsm/v1alpha1/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/service-level-objectives" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
+    curl -k -X PUT "https://${TSM_SERVER_NAME}/tsm/v1alpha1/global-namespaces/${TSM_GLOBALNAMESPACE_NAME}/service-level-objectives/${TSM_SLO_NAME}" -H "csp-auth-token:${CSP_AUTH_TOKEN}" -H "Content-Type: application/json" -d '
     {
         "type": "MONITORED",
         "description": "SLO for shopping service of the ACME Fitness App",
         "labels": [],
         "basic_options": [{
             "metricName": "p99LATENCY",
-            "value": 100
+            "value": 120
         }],
         "slo_target_value": 99.999,
         "slo_period": {
@@ -101,7 +101,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
         "basic_options": [
             {
             "metricName": "p99LATENCY",
-            "value": 100
+            "value": 120
             }
         ],
         "slo_target_value": 99.9990005493164,
@@ -114,28 +114,26 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
             "name": "shopping"
             }
         ],
-        "id": "21a41932-1da4-11ed-aafb-02649f9da822",
+        "id": "${TSM_SLO_NAME}",
         "creationTime": "2022-08-16T20:43:49.492Z"
     }
     ```
 
-    > **_NOTE:_**  Currently via the TSM REST API you cannot set the name like you can via the TSM UI. The display name in the TSM UI will be the `id` field.
-
-5. Validate in TSM UI SLO is created by navigating on the left side menu to `Policies > SLOs`. To view the SLO metrics click on the name (or UUID of the previously created SLO).
+5. Validate in TSM UI SLO is created by navigating on the left side menu to `Policies > SLOs`. To view the SLO metrics click on the SLO name.
 
     Expected:
 
     ![VMware SLO Policy](../images/vmware-tsm-slo-policy.png)
 
-    A dialog window showing the details of the SLO will popup.
+6. Validate the SLO metrics are displaying for the `shopping` service. First navigate to the `shopping` service dashboard by using the left side menu to `Inventory > Services` and clicking on the `shopping` service. From the `shopping` service dashboard select the `Performance` tab
 
-    ![VMware SLO Policy Dialog](../images/vmware-tsm-slo-policy-dialog.png)
+    Expected:
 
-    From the SLO dialog click on the `Full Page` link to get the SLO status page.
+    ![VMware Inventory Services - Shopping](../images/vmware-tsm-inventory-service-shopping.png)
 
-    ![VMware SLO Policy Status](../images/vmware-tsm-slo-status.png)
+    ![VMware Inventory Services - Shopping](../images/vmware-tsm-shopping-performance-slo.png)
 
-6. Generate traffic to the ACME Fitness Application to violate the newly created SLO from previous steps. Fire up the locust traffic generator application using the given locust file `/scenarios/files/acme-fitness-app/loadgen/locustfile.py` supplied with this project. Its best to start locust in distributed mode with 2 workers. If working from the supplied Management container, to start up locust in distributed worker mode with 2 workers, you can run the following in seperate windows/tabs:
+7. Generate traffic to the ACME Fitness Application to violate the newly created SLO from previous steps. Fire up a locust traffic generator application using the given locust file in `/scenarios/files/acme-fitness-app/loadgen/locustfile.py` supplied with this project. Its best to start locust in distributed mode with 2 workers. If working from the supplied Management container, to start up locust in distributed worker mode with 2 workers, you can run the following in seperate windows/tabs:
 
     master
 
@@ -159,8 +157,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
     [2022-08-16 21:19:05,762] cf6bf3632b3f/INFO/locust.main: Starting Locust 2.8.6
     </pre>
 
-
-7. Open Browser to locust running on `http://localhost:8089` and configure it with enough users to raise the ACME Fitness application latency for the `shopping` service above `100ms`.
+8. Open Browser to locust running on `http://localhost:8089` and configure it with enough users to overwhelm the ACME Fitness application and drive up the latency for the `shopping` service above configured SLO value for `p99LATENCY`.
 
     > **_NOTE:_**  Depending on your testing environment SLO latency and user count may differ a bit. You may have to alter them a bit to generate a SLO violation.
 
@@ -170,21 +167,15 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
     ![Traffic Generation Locust - Statistics](../images/traffic-gen-locust-statistics.png)
 
-8. After about a minute of load generation from the previous step, navigate to the GNS performance metrics via the TSM UI. Scroll down to the `P99 Latency` metric and observe the rise in wait time for the `shopping` service as the number of requests increases.
+9. After a few minutes of load generation from the previous step, go back to the TSM UI and the `shopping` service's `Performance` dashboard. Validate that the `shopping` service response latency increases with the increase in requests and as a result violates the configured SLO.
 
-    ![TSM GNS Performance](../images/vmware-tsm-gns-performance.png)
-
-    Expected:
-
-    ![TSM GNS Performance - latency rising](../images/vmware-tsm-gns-performance-p99-latency.png)
-
-9. In the TSM UI navigate back to the `SLO Status` page and view the SLO violation for `P99 Latency` of the shopping service.
-
-    ![TSM SLO Status](../images/vmware-tsm-slo-status.png)
+    > **_NOTE:_**  Its best to set the `Metric Time Range` to 5 or 10 minutes to easily see the latest violations.
 
     Expected:
 
-    ![TSM SLO Status - P99 Latency Violation](../images/vmware-tsm-slo-p99-latency-violation.png)
+    ![TSM GNS Performance](../images/vmware-tsm-shopping-service-performance-slo-violation.png)
+
+10. When satisfied with testing remember to shutdown traffic generation.
 
 ---
 
