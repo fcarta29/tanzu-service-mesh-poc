@@ -94,3 +94,4 @@ Test Case ID | Test Case Description |
 Test Case ID | Test Case Description |
 --- | --- |
 [SC06-TC02](scenarios/sc06-application-performance/sc06-tc02-service-slo-api.md) | Creates a SLO via the TSM Rest API for the ACME Fitness Application to monitor and capture violations of the SLO during load. |
+[SC06-TC03](scenarios/sc06-application-performance/sc06-tc03-service-autoscaling.md) | Creates a Autoscaling Policy via the TSM Rest API for the ACME Fitness Application to trigger up or down scaling events during heavy and light load. |
