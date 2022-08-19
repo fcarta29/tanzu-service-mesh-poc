@@ -12,8 +12,6 @@ This scenario test case creates a SLO via the TSM Rest API for the ACME Fitness 
 
 ## Useful documentation
 
-* VMware Cloud Portal Auth/Token Flow for API calls [VMware Cloud Portal Auth/Token Flow for API calls](https://docs.vmware.com/en/vRealize-Operations/Cloud/com.vmware.vcom.api.doc/GUID-57E59E35-6C08-4424-A77F-468FACD35C41.html)
-* Generating an API Token to Interact with VMware Cloud Service APIs [Generating an API Token to Interact with VMware Cloud Service APIs](https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-E2A3B1C1-E9AD-4B00-A6B6-88D31FCDDF7C.html)
 * Tanzu Service Mesh API [Tanzu Service Mesh API](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/api-programming-guide/GUID-FED8E849-B3C3-49ED-9FDB-1317CFFF3141.html)
 * Tanzu Service Mesh Service Level Objective (SLO) Overview [Tanzu Service Mesh SLO Overview](https://docs.vmware.com/en/VMware-Tanzu-Service-Mesh/services/slos-with-tsm/GUID-39CAB7F1-2425-43D4-953E-556A934976CE.html)
 
@@ -67,7 +65,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
 4. Create a monitored SLO for the `shopping` service.
 
-    > **_NOTE:_**  The example below defines a latency for the `shopping` service at a P99 latency of `100ms` and this value may differ on your environment. Observe a baseline P99 latency for the `shopping` service and chose a value slightly above for your SLO value.
+    > **_NOTE:_**  The example below defines a latency for the `shopping` service at a P99 latency of `120ms` and this value may differ on your environment. Observe a baseline P99 latency for the `shopping` service and chose a value slightly above for your SLO value.
 
     ![VMware SLO Policy](../images/vmware-tsm-app-topology-p99-latency.png)
 
@@ -119,7 +117,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
     }
     ```
 
-5. Validate in TSM UI SLO is created by navigating on the left side menu to `Policies > SLOs`. To view the SLO metrics click on the SLO name.
+5. Validate in TSM UI the new SLO is created by navigating on the left side menu to `Policies > SLOs`. To view the SLO metrics click on the SLO name.
 
     Expected:
 
@@ -167,7 +165,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
 
     ![Traffic Generation Locust - Statistics](../images/traffic-gen-locust-statistics.png)
 
-9. After a few minutes of load generation from the previous step, go back to the TSM UI and the `shopping` service's `Performance` dashboard. Validate that the `shopping` service response latency increases with the increase in requests and as a result violates the configured SLO.
+9. After a few minutes of load generation from the previous step, go back to the TSM UI and the `shopping` service's `Performance` dashboard. Validate that the `shopping` service response latency increased with the rise in requests and as a result violates the configured SLO.
 
     > **_NOTE:_**  Its best to set the `Metric Time Range` to 5 or 10 minutes to easily see the latest violations.
 
