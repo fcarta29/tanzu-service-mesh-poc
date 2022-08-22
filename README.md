@@ -95,3 +95,9 @@ Test Case ID | Test Case Description |
 --- | --- |
 [SC06-TC02](scenarios/sc06-application-performance/sc06-tc02-service-slo-api.md) | Creates a SLO via the TSM Rest API for the ACME Fitness Application to monitor and capture violations of the SLO during load. |
 [SC06-TC03](scenarios/sc06-application-performance/sc06-tc03-service-autoscaling.md) | Creates a Autoscaling Policy via the TSM Rest API for the ACME Fitness Application to trigger up or down scaling events during heavy and light load. |
+
+#### Scenario SC07: Application Security
+
+Test Case ID | Test Case Description |
+--- | --- |
+[SC07-TC01](scenarios/sc07-application-security/sc07-tc01-detect-PII-data.md) | Creates a sample credit card transaction to demonstrate TSM ability to recognize PII data and the service path it traverses. |
