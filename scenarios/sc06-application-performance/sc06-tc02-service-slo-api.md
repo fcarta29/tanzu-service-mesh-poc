@@ -136,7 +136,7 @@ This test procedure assumes that the full ACME Fitness Application was deployed 
     master
 
     ```bash
-    locust --host=<http://${ACME_FITNESS_FQDN>} -f /scenarios/files/acme-fitness-app/loadgen/locustfile.py --master
+    locust --host=<http://${ACME_FITNESS_FQDN} -f /scenarios/files/acme-fitness-app/loadgen/locustfile.py --master
     ```
 
     workers (x2)

@@ -101,3 +101,4 @@ Test Case ID | Test Case Description |
 Test Case ID | Test Case Description |
 --- | --- |
 [SC07-TC01](scenarios/sc07-application-security/sc07-tc01-detect-PII-data.md) | Creates a sample credit card transaction to demonstrate TSM ability to recognize PII data and the service path it traverses. |
+[SC07-TC02](scenarios/sc07-application-security/sc07-tc02-detect-SQL-injection.md) | Creates a threat detection policy and then generates a sql injection which get captured and displayed as a security event. |
