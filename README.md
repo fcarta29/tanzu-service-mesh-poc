@@ -63,6 +63,7 @@ make stop
 Test Case ID | Test Case Description |
 --- | --- |
 [SC01-TC01](scenarios/sc01-environment-setup/sc01-tc01-validate-tsm-console.md) | Validate TSM console accessible |
+[SC01-TC03](scenarios/sc01-environment-setup/sc01-tc03-csp-api-authorization-api.md) | Authorization and API Token |
 
 #### Scenario SC02: Cluster Onboarding
 
